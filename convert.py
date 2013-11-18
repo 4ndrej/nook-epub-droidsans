@@ -55,15 +55,19 @@ if __name__ == '__main__':
 
     shutil.copytree(dirpath+'/extracted', dirpath+'/output')
 
-    with open(dirpath+'/output/extra_nook.css', 'w') as f:
+    opsPrefix = 'OPS/'
+    if not os.path.isdir(dirpath+'/output/' + opsPrefix):
+        opsPrefix = ''
+
+    with open(dirpath+'/output/' + opsPrefix + 'extra_nook.css', 'w') as f:
         f.write(extra_css)
 
-    for fname in os.listdir(dirpath+'/extracted'):
+    for fname in os.listdir(dirpath+'/extracted/' + opsPrefix):
         if not fnmatch.fnmatch(fname, '*.html'):
             continue
 
-        out = open(dirpath+'/output/%s' % fname, 'w')
-        with open(dirpath+'/extracted/%s' % fname, 'r') as f:
+        out = open(dirpath+'/output/' + opsPrefix + '%s' % fname, 'w')
+        with open(dirpath+'/extracted/' + opsPrefix + '%s' % fname, 'r') as f:
             for line in f:
                 if '</head>' in line:
                     out.write(css_link)
