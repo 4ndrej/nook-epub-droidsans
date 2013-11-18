@@ -7,36 +7,30 @@ from zipfile import ZipFile
 
 
 extra_css = '''@font-face {
-font-family: "DroidFont", serif, sans-serif;
+font-family: "Arial", serif;
 font-weight: normal;
 font-style: normal;
-src: url(res:///system/fonts/DroidSansFallback.ttf);
+src: url("res:///system/media/sdcard/fonts/arial.ttf");
 }
 @font-face {
-font-family: "DroidFont", serif, sans-serif;
+font-family: "Arial", serif;
 font-weight: bold;
 font-style: normal;
-src: url(res:///system/fonts/DroidSansFallback.ttf);
+src: url("res:///system/media/sdcard/fonts/arialbd.ttf");
 }
 @font-face {
-font-family: "DroidFont", serif, sans-serif;
+font-family: "Arial", serif;
 font-weight: normal;
 font-style: italic;
-src: url(res:///system/fonts/DroidSansFallback.ttf);
+src: url("res:///system/media/sdcard/fonts/ariali.ttf");
 }
 @font-face {
-font-family: "DroidFont", serif, sans-serif;
+font-family: "Arial", serif;
 font-weight: bold;
 font-style: italic;
-src: url(res:///system/fonts/DroidSansFallback.ttf);
+src: url("res:///system/media/sdcard/fonts/arialbi.ttf");
 }
-body { font-family: "DroidFont", serif;}
-p{ font-family: "DroidFont", serif;}
-div{ font-family: "DroidFont", serif;}
-h1{ font-family: "DroidFont", serif;}
-h2{ font-family: "DroidFont", serif;}
-h3{ font-family: "DroidFont", serif;}
-'''
+body, p, div, h1, h2, h3 { font-family: "Arial", serif;}'''
 css_link = '<link rel="stylesheet" type="text/css" href="extra_nook.css"/>'
 
 
@@ -57,15 +51,15 @@ if __name__ == '__main__':
 
     shutil.copytree('extracted', 'output')
 
-    with open('output/OPS/extra_nook.css', 'w') as f:
+    with open('output/extra_nook.css', 'w') as f:
         f.write(extra_css)
 
-    for fname in os.listdir('extracted/OPS'):
+    for fname in os.listdir('extracted'):
         if not fnmatch.fnmatch(fname, '*.html'):
             continue
 
-        out = open('output/OPS/%s' % fname, 'w')
-        with open('extracted/OPS/%s' % fname, 'r') as f:
+        out = open('output/%s' % fname, 'w')
+        with open('extracted/%s' % fname, 'r') as f:
             for line in f:
                 if '</head>' in line:
                     out.write(css_link)
@@ -73,7 +67,7 @@ if __name__ == '__main__':
 
         out.close()
 
-    output_fname = '%s_converted.epub' % os.path.splitext(epub)[0]
+    output_fname = '%s_fonted.epub' % os.path.splitext(epub)[0]
     shutil.make_archive(output_fname, format='zip', root_dir='output')
     shutil.move('%s.zip' % output_fname, output_fname)
 
