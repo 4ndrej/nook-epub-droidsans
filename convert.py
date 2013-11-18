@@ -1,10 +1,12 @@
+#!/usr/bin/env python
+
 import fnmatch
 import os
 import shutil
 import sys
+import tempfile
 import zipfile
 from zipfile import ZipFile
-
 
 extra_css = '''@font-face {
 font-family: "Arial", serif;
@@ -46,20 +48,22 @@ if __name__ == '__main__':
         print('EPUB file given is not a valid zip file.')
         sys.exit(1)
 
+    dirpath = tempfile.mkdtemp()
+
     with ZipFile(open(epub, 'r')) as zf:
-        zf.extractall(path='extracted')
+        zf.extractall(path=dirpath+'/extracted')
 
-    shutil.copytree('extracted', 'output')
+    shutil.copytree(dirpath+'/extracted', dirpath+'/output')
 
-    with open('output/extra_nook.css', 'w') as f:
+    with open(dirpath+'/output/extra_nook.css', 'w') as f:
         f.write(extra_css)
 
-    for fname in os.listdir('extracted'):
+    for fname in os.listdir(dirpath+'/extracted'):
         if not fnmatch.fnmatch(fname, '*.html'):
             continue
 
-        out = open('output/%s' % fname, 'w')
-        with open('extracted/%s' % fname, 'r') as f:
+        out = open(dirpath+'/output/%s' % fname, 'w')
+        with open(dirpath+'/extracted/%s' % fname, 'r') as f:
             for line in f:
                 if '</head>' in line:
                     out.write(css_link)
@@ -68,8 +72,7 @@ if __name__ == '__main__':
         out.close()
 
     output_fname = '%s_fonted.epub' % os.path.splitext(epub)[0]
-    shutil.make_archive(output_fname, format='zip', root_dir='output')
+    shutil.make_archive(output_fname, format='zip', root_dir=dirpath+'/output')
     shutil.move('%s.zip' % output_fname, output_fname)
 
-    shutil.rmtree('extracted')
-    shutil.rmtree('output')
+    shutil.rmtree(dirpath)
